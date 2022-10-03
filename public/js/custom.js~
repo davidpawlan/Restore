@@ -1,0 +1,644 @@
+/**********************************************/
+/*=============COMMON FUNCTIONS==============*/
+/*SCRF token when any ajax request is call--*/
+function setUpCSRF(){
+	var csrf = $(".csrf_token").val();
+    $.ajaxSetup({
+	    headers: {
+	        'X-CSRF-TOKEN': csrf
+	    }
+	});
+}
+
+/*Space filled in any input field--*/
+if($("input").length > 0){
+	$("input").keyup(function(){
+		var value = $(this).val();
+		if($.trim(value) == ""){
+			$(this).val('');
+		}
+	});
+
+	$("input").blur(function(){
+	  	var value = $(this).val();
+		if($.trim(value) == ""){
+			$(this).val('');
+		}
+	});
+}
+
+/*Remove blank empty blank space from input/textarea*/
+if($("textarea").length > 0){
+	$("textarea").keyup(function(){
+		var value = $(this).val();
+		if($.trim(value) == ""){
+			$(this).val('');
+		}
+	});
+
+	$("textarea").blur(function(){
+	  	var value = $(this).val();
+		if($.trim(value) == ""){
+			$(this).val('');
+		}
+	});
+}
+
+
+/**Validate form have class `validate_me`---*/
+if($(".validate_me").length > 0){
+	$(".validate_me").validate();
+}
+if($(".validate_change_profile").length > 0){
+	$(".validate_change_profile").validate();
+}
+
+if($(".validate_report_form").length > 0){
+	$(".validate_report_form").validate({
+		 errorPlacement: function(error, element) {
+	        if (element.attr("name") == "date") {
+	            error.insertAfter(".date_error");
+	        }
+	        else if (element.attr("name") == "time") {
+	            error.insertAfter(".time_error");
+	        }
+	        else{
+	            error.insertAfter(element);
+	        }
+    	}
+	});
+}
+
+
+/*Limit Entering Data---*/
+/*Space not allowed--*/
+if($(".space_disallow").length > 0){
+	$('.space_disallow').on('keypress', function(e) {
+        if (e.which == 32)
+            return false;
+    });
+ /*Alllow only a-Z --*/
+  if($(".only_letters").length > 0){
+  		$(".only_letters").keypress(function (e) {
+		   var keyCode = e.keyCode || e.which;
+		   var regex = /^[A-Za-z ]+$/;
+		   var isValid = regex.test(String.fromCharCode(keyCode));
+		    if (!isValid) {
+		    	return false;
+		    }
+		});
+  }
+  /*Alllow a-Z and 0-9 with space--*/
+  if($(".letters_digits").length > 0){
+  		$(".letters_digits").keypress(function (e) {
+		   var keyCode = e.keyCode || e.which;
+		   var regexLettersDigits = /^[A-Za-z0-9 ]+$/;
+		   var isValid = regexLettersDigits.test(String.fromCharCode(keyCode));
+		   if (!isValid) {
+		    	return false;
+		   }
+		});
+  }
+}
+
+/*****************************************/
+/*****ADMIN PANEL JS START****************/
+/*****************************************/
+/*Onchange school get grades--*/
+if($(".select_schools").length > 0){
+	$('select.select_schools').on('change', function() {
+		var selectedValue = $(this).val();
+		if(selectedValue != ""){
+			$(".select_grade option").removeClass("hide");
+			$('.select_grade').prop('selectedIndex',0);
+			$(".students_appended").html('<option value="">All Students</option>');
+
+		}else{
+			$('.select_grade').prop('selectedIndex',0);
+			$(".select_grade option").addClass("hide");
+			$("#select_grades_option").removeClass("hide");
+			$('.select_schools').prop('selectedIndex',0);
+			$(".students_appended").prop('selectedIndex',0);
+		}
+	});
+}
+/*Onchange grade get students--*/
+if($(".select_grade").length >0){
+	$('select.select_grade').on('change', function() {
+		let selectedGrade = $(this).val();
+		let school_id     = $("select.select_schools").val();
+		$.ajax({
+			type:"get",
+			url: base_url+"/schools/"+school_id+"/grades/"+selectedGrade+"/students",
+			success:function(response){
+				if(response){
+					$(".students_appended").html(response);
+				}
+			},
+			error: function(err, resp){
+				console.log(err);
+			}
+		});
+	});
+}
+
+/*Delete/Deactivate school--*/
+if($(".delete_btn").length > 0){
+	$(".delete_btn").click(function(){
+		let data_title = $(this).data("title");
+		let data_href  = $(this).data("href");
+		let data_button = $(this).data("button");
+		$("#modal-header-titile").html(data_button);
+		$("#confirm_delete").html(data_button);
+		$("#confirm_delete").attr("href",data_href);
+		$("#confirmDelete").find(".data-title").html(data_title);
+		$("#confirmDelete").modal("show");
+	});
+}
+
+/*form validations Start--*/
+$(document).ready(function(){
+	/*Add School--*/
+	if($("#add_school").length > 0){
+		$(".add_school").validate({
+			submitHandler:function(){
+				$(".close_icon_add_school").addClass("hide");
+				$("#add_school .spinner_show").removeClass("hide");
+				/*$("#add_school .submit_button_school").prop("disabled",true);*/
+				$("#add_school .email_exist_error").css("display","none");
+				$("#add_school .something_wrong_error").text('');
+				setUpCSRF();
+				var dataToSend = $(".add_school").serialize();
+				$.ajax({
+					url : base_url+"/admin/schools",
+					type:"post",
+					data: dataToSend,
+					success: function(result){
+						$("#add_school .spinner_show").addClass("hide");
+						$("#add_school .submit_button_school").prop("disabled",false);
+						$(".close_icon_add_school").removeClass("hide");
+						var response = jQuery.parseJSON(result);
+                           if(response.status == "1"){
+                             location.reload();
+                           }else if(response.status == "-1"){
+                           	  $("#add_school .email_exist_error").css("display","block").text(response.message);
+                           }else{
+                           	 $("#add_school .something_wrong_error").text(response.message);
+                           }
+					},
+					error: function(err, res){
+						$("#add_school .spinner_show").addClass("hide");
+						console.log(res);
+						$("#add_school .submit_button_school").prop("disabled",false);	
+					}
+				});
+				return false;
+			}
+		});
+	}
+	/*Edit School Set values in form--*/
+	if($(".edit_btn").length > 0){
+		$(".edit_btn").click(function(){
+			let school_name 	= $(this).data("school-name");
+			let principle_name	= $(this).data("principle-name");
+			let school_email	= $(this).data("school-email");
+			let school_id		= $(this).data("school-id");
+			$(".edit_school_id").val(school_id);
+			$(".edit_school_name").val(school_name);
+			$(".edit_principle_name").val(principle_name);
+			$(".edit_school_email").val(school_email);
+			$("#edit_school").modal("show");
+		});
+	}
+
+	/*Update School--*/
+	if($("#edit_school").length > 0){
+		$(".editschool").validate({
+			submitHandler:function(){
+				$("#edit_school .spinner_show").removeClass("hide");
+				$("#edit_school .submit_button_school").prop("disabled",true);
+				$("#edit_school .email_exist_error").css("display","none");
+				$("#edit_school .something_wrong_error").text('');
+				setUpCSRF();
+				var dataToSend = $(".editschool").serialize();
+				$.ajax({
+					url : base_url+"/admin/schools/update",
+					type:"post",
+					data: dataToSend,
+					success: function(result){
+						$("#edit_school .spinner_show").addClass("hide");
+						$("#edit_school .submit_button_school").prop("disabled",false);
+						var response = jQuery.parseJSON(result);
+                           if(response.status == "1"){
+                             location.reload();
+                           }else if(response.status == "-1"){
+                           	  $("#edit_school .email_exist_error").css("display","block").text(response.message);
+                           }else{
+                           	 $("#edit_school .something_wrong_error").text(response.message);
+                           }
+					},
+					error: function(err, res){
+						$("#edit_school .spinner_show").addClass("hide");
+						console.log(res);
+						$("#edit_school .submit_button_school").prop("disabled",false);	
+					}
+				});
+				return false;
+			}
+		});
+	}
+
+});
+
+/*****************************************/
+/*****ADMIN PANEL JS ENDS****************/
+/*****************************************/
+
+
+/**************************************************/
+/*=====================SCHOOL JS START============*/
+/**************************************************/
+/*Change password School--*/
+if($(".change_school_password").length > 0){
+	$(".change_school_password").validate({
+			submitHandler:function(){
+				$(".change_school_password .current_password_error").addClass("hide").text("");
+				$(".change_school_password .new_password_error").addClass("hide").text("");
+				$(".change_school_password .password_change_success").addClass("hide").text("");
+				$(".change_school_password .spinner_show").removeClass("hide");
+				
+				setUpCSRF();
+				var dataToSend = $(".change_school_password").serialize();
+				/*alert(dataToSend);*/
+				$.ajax({
+					url : base_url+"/change-password",
+					type:"post",
+					data: dataToSend,
+					success: function(result){
+						$(".change_school_password .spinner_show").addClass("hide");
+						var response = jQuery.parseJSON(result);
+
+                           if(response.status == "1"){
+                             /*$(".change_school_password input").val("");*/
+                             $(".change_school_password .password_change_success").removeClass("hide").css('display', 'inline-block').text(response.message);
+                             location.reload();
+                           }else if(response.status == "-1"){
+                           	  $(".change_school_password .current_password_error").removeClass("hide").css('display', 'inline-block').text(response.message);
+                           }else if(response.status == "-2"){
+                           	  $(".change_school_password .new_password_error").removeClass("hide").css('display', 'inline-block').text(response.message);
+                           }else{
+                           	 $("#edit_school .something_wrong_error").text(response.message);
+                           }
+					},
+					error: function(err, res){
+						$(".change_school_password .spinner_show").addClass("hide");
+						console.log(res);
+					}
+				});
+				return false;
+			}
+		});
+	}
+	/*Get Students on change grade--*/
+	if($("#grade_select").length > 0){
+		$('select#grade_select').on('change', function() {
+		   let grade_id = this.value;
+		   if(grade_id){
+		   	$.ajax({
+		   		url  : base_url+"/grade/"+grade_id+"/students",
+		   		type :"get",
+		   		cache: false,
+		   		success: function(result){
+		   			$('#gender_select').prop('selectedIndex',0);
+		   			$('#grade_students').empty().append('<option value="">All Students</option>');
+		   			if(result != ""){
+		   				$('#grade_students').append(result);
+		   			}
+		   		},
+		   		error : function(err, res){
+		   			console.log(err);
+		   		}
+		   	});
+		   }
+		});
+	}
+	/*Get Student's gender on change student--*/
+		if($("#grade_students").length > 0){
+		$('select#grade_students').on('change', function() {
+		   let student_id = this.value;
+		   if(student_id){
+		   	$.ajax({
+		   		url  : base_url+"/students/"+student_id+"/gender",
+		   		type :"get",
+		   		cache: false,
+		   		success: function(result){
+		   			if(result != ""){
+		   				$('#gender_select').val(result);
+		   			}
+		   		},
+		   		error : function(err, res){
+		   			console.log(err);
+		   		}
+		   	});
+		   }
+		});
+	}
+
+
+	if($(".edit_school_info").length > 0){
+		$(".edit_school_info").click(function(){
+			let data_title = $(this).data("title");
+			let edit       = $(this).data("edit");
+			let label      = $(this).data("label");
+			let prifilText = $(this).parent("li").find('.school_text_edit').text();
+			$(".school_edit_title").text(data_title);
+			$(".edit_for").text(label);
+			$(".edit_for_field").val(edit);
+			$(".prefile_text_input").val(prifilText);
+		});
+	}
+	if($(".change_school_info").length > 0){
+		$(".change_school_info").validate();
+	}
+
+/**************************************************/
+/*=====================SCHOOL JS END============*/
+/**************************************************/
+
+
+/*************************************************/
+/******Common functions
+/************************************************/
+/* View Report Modal*/
+if($(".view_report_btn").length > 0){
+	$(".view_report_btn").click(function(){
+		let report_id = $(this).data("id");
+		$.ajax({
+			url  : base_url+"/reports/"+report_id,
+			type : "get",
+			success : function(success){
+				if(success != "0"){
+					$("#view").modal("show");
+					$(".report-details-show").html(success);
+				}
+			},
+			error : function(error){
+
+			}
+		});
+
+		
+	});
+}
+
+
+/****************************************************/
+/*PDF Export Function for school and Admin
+/****************************************************/
+if($(".download-pdf").length > 0){
+	function headerTextPdf(className, x, y,type=""){
+		if(x == 0){
+			x = 30;
+		}
+	  var dataHeader = $("."+className).text();
+	  if(type == "header"){
+	  	return '<text x= "' +x+ '" y = "' + y + '" style = "width:600px; height:50px;font-size: 10px;font-weight:bold;">'+dataHeader+'</text>';
+	  }else{
+	  	return '<text x= "' +x+ '" y = "' + y + '" style = "width:600px; height:50px;font-size: 10px;">'+dataHeader+'</text>';
+	  }
+	}
+	function check_odd_even(number){
+		var number = parseInt(number);	
+		 if ( number % 2 == 0 ){
+		  return "E"; //Even
+		 }
+		 else {
+		   return "O"; //Odd
+		 }
+	}
+
+	$(function() {
+	  Highcharts.getSVG = function(charts, texts) {
+	    var svgArr = [],
+	      top = 30,
+	      width = 0,
+	      txt,HeaderText="",pdfWidth=0;
+
+	      /*PDF HEADINGS--*/
+	var pdfMainHeader =  '<text x= "150" y = "'+top+'" style = "width:600px; height:50px;font-size: 11px;font-weight:bold">Analytics Report ( '+today+')</text>';
+	svgArr.push(pdfMainHeader);
+
+
+	//txt = '<table x= "' + 0 + '" y = "' + (top+50) + '" styles = "width:600px; height:50pxfont-size: 12px;"><tr><td>dd</td><td>ss</td></tr></table>';
+	/*Header Data--*/   
+	if($(".SchoolInfo").length > 0){
+		HeaderText += headerTextPdf('SchoolInfo',0, (top+40) );/*headerTextPdf('className',x,y)  */
+	}
+	if($(".totalSchools").length > 0){
+		HeaderText += headerTextPdf('totalSchools',300, (top+40) );/*headerTextPdf('className',x,y)  */
+	}
+	if($(".gradeInfo").length > 0){
+		HeaderText += headerTextPdf('gradeInfo',0, (top+60) );/*headerTextPdf('className',x,y)  */
+	}
+	if($(".totalgrades").length > 0){
+		HeaderText += headerTextPdf('totalgrades',300, (top+60) );/*headerTextPdf('className',x,y)  */
+	}
+	if($(".studentInfo").length > 0){
+		HeaderText += headerTextPdf('studentInfo',0, (top+80) );/*headerTextPdf('className',x,y)  */
+	}
+	if($(".totalStudents").length > 0){
+		HeaderText += headerTextPdf('totalStudents',300, (top+80) );/*headerTextPdf('className',x,y)  */
+	}
+	if($(".timePeriodInfo").length > 0){
+		HeaderText += headerTextPdf('timePeriodInfo',0, (top+100) );/*headerTextPdf('className',x,y)  */
+	}
+	if($(".timePeriodDetails").length > 0){
+		HeaderText += headerTextPdf('timePeriodDetails',300, (top+100) );/*headerTextPdf('className',x,y)  */
+	}
+	if($(".totalReports").length > 0){
+		HeaderText += headerTextPdf('totalReports',0, (top+120) );/*headerTextPdf('className',x,y)  */
+	}
+	svgArr.push(HeaderText);
+	/*Header Data PUshed--*/
+
+	/*Charts Begin--*/
+	    Highcharts.each(charts, function(chart, i) {
+	      if(i == 0){
+	    		top += 140;	
+		   }else{
+	    		top += 30;	
+	       }
+
+	      var chartHeaderClassName = "reportHeader"+i;
+	      var headerOfTheCharts = headerTextPdf(chartHeaderClassName,0, (top+10),"header");
+	      svgArr.push(headerOfTheCharts);
+
+		  top += 20;
+
+		  var svg = chart.getSVG();
+	      svg = svg.replace('<svg', '<g transform="translate(0,' + top + ')" ');
+	      svg = svg.replace('</svg>', '</g>');
+	      top += chart.chartHeight;
+	      width = Math.max(width, chart.chartWidth);
+	      svgArr.push(svg);
+	      
+	      /*Push Charts Info to pdf--*/
+	      if(i == 0){
+	      	/*Restorative Practice*/
+	      	var ReprosativeChartText = "";
+	      	var detailsTop = top;
+	      	$(".reprosativePractice").each(function( index ) {
+	      		var checkIsEven = check_odd_even((index+1));
+	      		if(checkIsEven == "E"){
+	      				widthY  = 400;
+	      			    heightX = detailsTop;
+	      		}else{
+	      			    widthY  = 0;
+	      			    heightX = detailsTop+20;
+	      			    detailsTop = heightX;
+	      			    top += 20;
+	      		}
+			   var RepClassName = "practice_"+index;   
+			   ReprosativeChartText += headerTextPdf(RepClassName,widthY, heightX);
+			});
+			 svgArr.push(ReprosativeChartText);
+	      }else if(i == 1){
+	      	/*Time Reports*/
+	      	var timeReportsChartText = "";
+	      	var detailsTop = top;
+	      	$(".timeReports").each(function( index ) {
+	      		var checkIsEven = check_odd_even((index+1));
+	      		if(checkIsEven == "E"){
+	      				widthY  = 400;
+	      			    heightX = detailsTop;
+	      		}else{
+	      			    widthY  = 0;
+	      			    heightX = detailsTop+20;
+	      			    detailsTop = heightX;
+	      			    top += 20;
+	      		}
+			   var RepClassName = "report_time"+index;   
+			   timeReportsChartText += headerTextPdf(RepClassName,widthY, heightX);
+			});
+			 svgArr.push(timeReportsChartText);
+	      }else if(i == 2){
+	      	/*Gender Reports*/
+	      	var genderReportsChartText = "";
+	      	var detailsTop = top;
+	      	var checkNewLine=0;
+	      	$(".genderReports").each(function( index ) {
+	      		var data_index  = $(this).data("index");
+	      		var data_gender = $(this).data("type");
+				
+				if(checkNewLine == data_index){
+	      				widthY  = 400;
+	      			    heightX = detailsTop;
+	      		}else{
+	      			    widthY  = 0;
+	      			    heightX = detailsTop+20;
+	      			    detailsTop = heightX;
+	      			    top += 20;
+	      			    checkNewLine = data_index;
+	      		}
+			   var RepClassName = "gender_report_"+data_index+"_"+data_gender;   
+			   genderReportsChartText += headerTextPdf(RepClassName,widthY, heightX);
+			});
+			svgArr.push(genderReportsChartText);
+	      }else if(i == 3){
+	      	/*Behaviour Reports*/
+	      	var behaviourReportsChartText = "";
+	      	var detailsTop = top;
+	      	$(".behavioursReports").each(function( index ) {
+	      		var checkIsEven = check_odd_even((index+1));
+	      		if(checkIsEven == "E"){
+	      				widthY  = 400;
+	      			    heightX = detailsTop;
+	      		}else{
+	      			    widthY  = 0;
+	      			    heightX = detailsTop+20;
+	      			    detailsTop = heightX;
+	      			    top += 20;
+	      		}
+			   var RepClassName = "behaviour_report"+(index+1);   
+			   behaviourReportsChartText += headerTextPdf(RepClassName,widthY, heightX);
+			});
+			svgArr.push(behaviourReportsChartText);
+	      }else if(i == 4){
+      		/*Location Reports*/
+	      	var locationReportsChartText = "";
+	      	var detailsTop = top;
+	      	$(".locationsReports").each(function( index ) {
+	      		var checkIsEven = check_odd_even((index+1));
+	      		if(checkIsEven == "E"){
+	      				widthY  = 400;
+	      			    heightX = detailsTop;
+	      		}else{
+	      			    widthY  = 0;
+	      			    heightX = detailsTop+20;
+	      			    detailsTop = heightX;
+	      			    top += 20;
+	      		}
+			   var RepClassName = "location_report"+(index+1);   
+			   locationReportsChartText += headerTextPdf(RepClassName,widthY, heightX);
+			});
+			svgArr.push(locationReportsChartText);
+	      }else if(i == 5){
+	      	/*Intervention Reports*/
+	      	var interventionReportsChartText = "";
+	      	var detailsTop = top;
+	      	$(".interventionReports").each(function( index ) {
+	      		var checkIsEven = check_odd_even((index+1));
+	      		if(checkIsEven == "E"){
+	      				widthY  = 400;
+	      			    heightX = detailsTop;
+	      		}else{
+	      			    widthY  = 0;
+	      			    heightX = detailsTop+20;
+	      			    detailsTop = heightX;
+	      			    top += 20;
+	      		}
+			   var RepClassName = "intervention_report"+(index+1);   
+			   interventionReportsChartText += headerTextPdf(RepClassName,widthY, heightX);
+			});
+			svgArr.push(interventionReportsChartText);
+	      }
+
+	    });
+	    return '<svg height="' + (top+100) + '" width="1200" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
+	  };
+
+		Highcharts.exportChartWithText = function(charts, texts, options) {
+		// Merge the options
+	    options = Highcharts.merge(Highcharts.getOptions().exporting, options);
+
+	    // Post to export server
+	    Highcharts.post(options.url, {
+	      filename: options.filename || 'analytics',
+	      type: options.type,
+	      width: options.width,
+	      allowHTML:true,
+		    showTable:true,
+	      svg: Highcharts.getSVG(charts, texts)
+	    });
+	  };
+
+	 var texts = $('.HC');
+	 	$(".download-pdf").click(function(){
+			var chart1 = $('#container2').highcharts();
+			var chart2 = $('#container1').highcharts();
+			var chart3 = $("#container").highcharts();
+			var chart4 = $("#container3").highcharts();
+			var chart5 = $("#container4").highcharts();
+			var chart6 = $("#container5").highcharts();
+			 Highcharts.exportChartWithText([chart1,chart2,chart3,chart4,chart5,chart6],texts, {
+			 	 allowHTML:true,
+			 	 showTable:true,
+			 	 sourceHeight:100,
+			 	 type: 'application/pdf'
+			  });
+		});
+	});
+}
+/****************************************************/
+/*PDF Export Function for school and Admin Ends
+/****************************************************/

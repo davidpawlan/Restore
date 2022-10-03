@@ -1,0 +1,16 @@
+.btn_submit button, .filter_btn button {
+    border: transparent;
+}
+label.error { 
+    color: red;
+    font-weight: bold;
+    font-size: 16px;
+}
+label.success {
+    color: #118111;
+    font-weight: bold;
+    font-size: 16px;
+}
+.submit_button_school{
+	display:block !important;
+}
