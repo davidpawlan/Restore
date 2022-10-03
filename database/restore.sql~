@@ -1,0 +1,169 @@
+DROP TABLE IF EXISTS `behaviors`;
+CREATE TABLE `behaviors` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `grades`;
+CREATE TABLE `grades` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `grade_rosters`;
+CREATE TABLE `grade_rosters` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'Id of users table',
+  `grade_id` bigint(20) unsigned NOT NULL COMMENT 'Id of grades table',
+  `file_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '1=>Active, 0=>Inactive',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `grade_rosters_user_id_foreign` (`user_id`),
+  KEY `grade_rosters_grade_id_foreign` (`grade_id`),
+  CONSTRAINT `grade_rosters_grade_id_foreign` FOREIGN KEY (`grade_id`) REFERENCES `grades` (`id`),
+  CONSTRAINT `grade_rosters_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `interventions`;
+CREATE TABLE `interventions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `locations`;
+CREATE TABLE `locations` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `migrations`;
+CREATE TABLE `migrations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1,	'2014_10_12_000000_create_users_table',	1),
+(2,	'2014_10_12_100000_create_password_resets_table',	1),
+(3,	'2019_07_04_11320_create_schools_table',	1),
+(4,	'2019_07_04_113241_create_grades_table',	1),
+(5,	'2019_07_04_113242_create_students_table',	1),
+(6,	'2019_07_04_113307_create_grade_rosters_table',	1),
+(7,	'2019_07_04_113516_create_behaviors_table',	1),
+(8,	'2019_07_04_113530_create_locations_table',	1),
+(9,	'2019_07_04_113600_create_interventions_table',	1),
+(10,	'2019_07_11_113321_create_reports_table',	1);
+
+DROP TABLE IF EXISTS `password_resets`;
+CREATE TABLE `password_resets` (
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  KEY `password_resets_email_index` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `reports`;
+CREATE TABLE `reports` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'Id of users table',
+  `student_id` bigint(20) unsigned NOT NULL COMMENT 'Id of students table',
+  `gender` enum('M','F') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'M=>Male, F=>Female',
+  `behaviour_id` bigint(20) unsigned NOT NULL COMMENT 'Id of behaviour table',
+  `location_id` bigint(20) unsigned NOT NULL COMMENT 'Id of locations table',
+  `intervention_id` bigint(20) unsigned NOT NULL COMMENT 'Id of interventions table',
+  `date` date NOT NULL,
+  `time` time NOT NULL,
+  `self_awareness` int(11) NOT NULL COMMENT '0=>Poor, 1->Avg 2=>optimal',
+  `self_management` int(11) NOT NULL COMMENT '0=>Poor, 1->Avg 2=>optimal',
+  `responsible_decision_making` int(11) NOT NULL COMMENT '0=>Poor, 1->Avg 2=>optimal',
+  `relationship_skills` int(11) NOT NULL COMMENT '0=>Poor, 1->Avg 2=>optimal',
+  `social_awareness` int(11) NOT NULL COMMENT '0=>Poor, 1->Avg 2=>optimal',
+  `other_notes` longtext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '0=>Poor, 1->Avg 2=>optimal',
+  `status` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '1=>ACtive, 0=>Archieve',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `reports_user_id_foreign` (`user_id`),
+  KEY `reports_student_id_foreign` (`student_id`),
+  KEY `reports_behaviour_id_foreign` (`behaviour_id`),
+  KEY `reports_location_id_foreign` (`location_id`),
+  KEY `reports_intervention_id_foreign` (`intervention_id`),
+  CONSTRAINT `reports_behaviour_id_foreign` FOREIGN KEY (`behaviour_id`) REFERENCES `behaviors` (`id`),
+  CONSTRAINT `reports_intervention_id_foreign` FOREIGN KEY (`intervention_id`) REFERENCES `interventions` (`id`),
+  CONSTRAINT `reports_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
+  CONSTRAINT `reports_student_id_foreign` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`),
+  CONSTRAINT `reports_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `schools`;
+CREATE TABLE `schools` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `principle_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Princile name for school',
+  `plain_password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Plain password etxt to show in admin',
+  `profile_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `schools_user_id_foreign` (`user_id`),
+  CONSTRAINT `schools_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `students`;
+CREATE TABLE `students` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'Id of users table',
+  `grade_id` bigint(20) unsigned NOT NULL COMMENT 'Id of grades table',
+  `grade_roster_id` int(11) NOT NULL COMMENT 'Id of grade_roster table',
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `roll_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gender` enum('M','F') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'M=>Male, F=>Female',
+  `status` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '0=>Archieve, 1=>Active',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `students_user_id_foreign` (`user_id`),
+  KEY `students_grade_id_foreign` (`grade_id`),
+  CONSTRAINT `students_grade_id_foreign` FOREIGN KEY (`grade_id`) REFERENCES `grades` (`id`),
+  CONSTRAINT `students_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` enum('A','S') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'A=>Admin, S=>School',
+  `status` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '1=>Active, 0=>Deactivate',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_email_unique` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- 2019-07-17 10:11:14

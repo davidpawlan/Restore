@@ -1,0 +1,50 @@
+[2019-07-31 11:28:11] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (InvalidArgumentException(code: 0): Log [] is not defined. at /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Log/LogManager.php:168)
+[stacktrace]
+#0 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(102): Illuminate\\Log\\LogManager->resolve(NULL)
+#1 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(90): Illuminate\\Log\\LogManager->get(NULL)
+#2 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(500): Illuminate\\Log\\LogManager->driver()
+#3 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(116): Illuminate\\Log\\LogManager->error('Class 'Symfony\\\\...', Array)
+#4 /var/www/html/restore/app/Exceptions/Handler.php(37): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\Debug\\Exception\\FatalThrowableError))
+#5 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(314): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\Debug\\Exception\\FatalThrowableError))
+#6 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(122): Illuminate\\Foundation\\Http\\Kernel->reportException(Object(Symfony\\Component\\Debug\\Exception\\FatalThrowableError))
+#7 /var/www/html/restore/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#8 /var/www/html/restore/index.php(21): require_once('/var/www/html/r...')
+#9 {main}
+"} 
+[2019-07-31 11:28:11] laravel.ERROR: Class 'Symfony\Component\Finder\Finder' not found {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalThrowableError(code: 0): Class 'Symfony\\Component\\Finder\\Finder' not found at /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88)
+[stacktrace]
+#0 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php(65): Illuminate\\Foundation\\Bootstrap\\LoadConfiguration->getConfigurationFiles(Object(Illuminate\\Foundation\\Application))
+#1 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php(39): Illuminate\\Foundation\\Bootstrap\\LoadConfiguration->loadConfigurationFiles(Object(Illuminate\\Foundation\\Application), Object(Illuminate\\Config\\Repository))
+#2 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(210): Illuminate\\Foundation\\Bootstrap\\LoadConfiguration->bootstrap(Object(Illuminate\\Foundation\\Application))
+#3 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(162): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#4 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(146): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#5 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(116): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#6 /var/www/html/restore/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#7 /var/www/html/restore/index.php(21): require_once('/var/www/html/r...')
+#8 {main}
+"} 
+[2019-07-31 11:28:11] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (InvalidArgumentException(code: 0): Log [] is not defined. at /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Log/LogManager.php:168)
+[stacktrace]
+#0 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(102): Illuminate\\Log\\LogManager->resolve(NULL)
+#1 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(90): Illuminate\\Log\\LogManager->get(NULL)
+#2 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(500): Illuminate\\Log\\LogManager->driver()
+#3 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(116): Illuminate\\Log\\LogManager->error('Class 'Symfony\\\\...', Array)
+#4 /var/www/html/restore/app/Exceptions/Handler.php(37): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\Debug\\Exception\\FatalThrowableError))
+#5 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(314): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\Debug\\Exception\\FatalThrowableError))
+#6 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(122): Illuminate\\Foundation\\Http\\Kernel->reportException(Object(Symfony\\Component\\Debug\\Exception\\FatalThrowableError))
+#7 /var/www/html/restore/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#8 /var/www/html/restore/index.php(21): require_once('/var/www/html/r...')
+#9 {main}
+"} 
+[2019-07-31 11:28:11] laravel.ERROR: Class 'Symfony\Component\Finder\Finder' not found {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalThrowableError(code: 0): Class 'Symfony\\Component\\Finder\\Finder' not found at /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88)
+[stacktrace]
+#0 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php(65): Illuminate\\Foundation\\Bootstrap\\LoadConfiguration->getConfigurationFiles(Object(Illuminate\\Foundation\\Application))
+#1 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php(39): Illuminate\\Foundation\\Bootstrap\\LoadConfiguration->loadConfigurationFiles(Object(Illuminate\\Foundation\\Application), Object(Illuminate\\Config\\Repository))
+#2 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(210): Illuminate\\Foundation\\Bootstrap\\LoadConfiguration->bootstrap(Object(Illuminate\\Foundation\\Application))
+#3 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(162): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#4 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(146): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#5 /var/www/html/restore/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(116): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#6 /var/www/html/restore/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#7 /var/www/html/restore/index.php(21): require_once('/var/www/html/r...')
+#8 {main}
+"} 
