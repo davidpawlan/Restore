@@ -265,6 +265,7 @@ if($(".change_school_password").length > 0){
 				$(".change_school_password .current_password_error").addClass("hide").text("");
 				$(".change_school_password .new_password_error").addClass("hide").text("");
 				$(".change_school_password .password_change_success").addClass("hide").text("");
+				$(".change_school_password .email_change_error").addClass("hide").text("");
 				$(".change_school_password .spinner_show").removeClass("hide");
 				
 				setUpCSRF();
@@ -286,6 +287,8 @@ if($(".change_school_password").length > 0){
                            	  $(".change_school_password .current_password_error").removeClass("hide").css('display', 'inline-block').text(response.message);
                            }else if(response.status == "-2"){
                            	  $(".change_school_password .new_password_error").removeClass("hide").css('display', 'inline-block').text(response.message);
+                           }else if(response.status == "-3"){
+                           	  $(".change_school_password .email_change_error").removeClass("hide").css('display', 'inline-block').text(response.message);
                            }else{
                            	 $("#edit_school .something_wrong_error").text(response.message);
                            }

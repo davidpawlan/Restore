@@ -1266,6 +1266,12 @@ p.dwnld_filefrmt {
 select{
     padding-right: 30px;
 }
+
+div#add_student {
+    z-index: 9999;
+    margin-top: 80px;
+}
+
 @media(min-width:1500px){
 	.main_anyltc ul li {
 		width: 48%;

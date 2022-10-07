@@ -37,6 +37,8 @@ Route::group(['middleware' => 'school'],function(){
 
 	/*Report History*/
 	Route::get("report-history","SchoolController@reportHistory");
+	Route::post("student","SchoolController@updateStudent")->name("updateStudent");
+	Route::post("delete_student","SchoolController@deleteStudent")->name("deleteStudent");
 
 	
 });

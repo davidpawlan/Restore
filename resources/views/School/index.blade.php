@@ -58,6 +58,9 @@
 	.active_student{
 		background-color: #eee;
 	}
+	.error {
+		color: red !important;
+	}
 	</style>
 </head>
 <body>
@@ -86,7 +89,7 @@
 				<select class="form-control" name="student" onchange="this.form.submit()">
 					<option value="">All Students</option>
 					@forelse($students as $student)
-						<option @isset($_GET['student']) @if(base64_decode($_GET['student']) == $student->id) SELECTED @endif @endisset value="{{base64_encode($student->id)}}">{{$student->name}}</option>
+						<option @isset($_GET['student']) @if(base64_decode($_GET['student']) == $student->id) SELECTED @endif @endisset value="{{base64_encode($student->id)}}">{{$student->name}} {{$student->last_name}}</option>
 					@empty
 					@endforelse
 			    </select>
@@ -153,22 +156,41 @@
 	  </div>
 	</div>
 	<div class="left_abr_contnt">   
+		@if(session()->has('message'))
+          <div class="alert {{(session()->get('error')) ? 'alert-danger' : 'alert-success'}}">
+              {{ session()->get('message') }}
+          </div>
+      @endif
 	  <div class="inner_studnt_listng">
 				<div class="studnt_recrd">
-					<h3><span class="bck_arror"><a href="#"><i class="fa fa-angle-double-left" aria-hidden="true"></i></a></span>@if(count($students) >1) Students @else Student @endif<span>({{count($students)}})</span></h3>
+					<h3><span class="bck_arror"><a href="#"><i class="fa fa-angle-double-left" aria-hidden="true"></i></a></span>@if(count($students) >1) Students @else Student @endif<span>({{count($students)}})</span><button id="addstudent" class="btn btn-primary pull-right" data-toggle="modal" data-target="#add_student">Add Student</button></h3>
 					<ul>
 						@forelse($students as $student)
 						<li  @isset($_GET['student'])  @if(base64_decode($_GET['student']) == $student->id) class="active_student" @endif @endisset  >
 							<a href="{{URL::to('/')}}?student={{base64_encode($student->id)}}@isset($_GET['grade'])&grade={{$_GET['grade']}}@endisset"><div class="studnt_informtn">
 								<h4>#{{$student->roll_number}}</h4>
-								<h2>{{$student->name}}</h2>
+								<h2>{{$student->name}} {{$student->last_name}}</h2>
 								<h5>Gender: @if($student->gender == "M") Male @else Female @endif</h5>
 							</div>
 							<div class="studnt_nbame">
-								<p>{{strtoupper(substr($student->name, 0, 2))}}</p>
+								<p>{{strtoupper(substr($student->name." ".$student->last_name, 0, 2))}}</p>
 							</div>
-							<span class="tab_arrow"><Img src="{{URL::to('/')}}/public/images/tab_right_arrow.png"></span>
+							<span class="tab_arrow">
+								<!-- <Img src="{{URL::to('/')}}/public/images/tab_right_arrow.png"> -->
+							<div class="dropdown">
+								<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Action">
+								<i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+
+								</button>
+								<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+									<ul>
+										<li class="student_edit" data-detail="{{json_encode($student)}}">Edit</li>
+										<li class="student_delete" data-id="{{$student->id}}">Delete</li>
+									</ul>
+								</div>
+							</div></span>
 							</a>
+							
 						</li>
 						@empty
 						<li>No Student Found</li>
@@ -308,6 +330,68 @@
 				
 
 	</div>
+
+
+	<div class="modal fade add_notespopup" id="add_student" role="dialog">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content report_inner">
+				<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><img src="{{URL::to('/')}}/public/images/close.png"></button>
+				<h4 class="modal-title">Add Student</h4>
+				</div>
+				<div class="modal-body">
+					<form action="{{ route('updateStudent') }}" id="addStudentForm" method="post">
+						{{csrf_field()}}
+					<div class="row form-group">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label>First Name</label>
+								<input type="hidden" id="student_id" name="student_id" value="">
+								<input type="text" name="first_name" id="first_name" value="" class="form-control" placeholder="Enter first name">
+							</div>
+							<div class="form-group">
+								<label>Last Name</label>
+								<input type="text" name="last_name" id="last_name" value="" class="form-control" placeholder="Enter last name">
+							</div>
+							<div class="form-group">
+								<label>Roll No.</label>
+								<input type="text" name="roll_number" id="roll_number" value="" class="form-control" placeholder="Enter rool number">
+							</div>
+							<div class="form-group">
+								<label>Gender</label>
+								<select name="gender" id="gender" class="form-control">
+									<option value="">Select Gender</option>
+									<option value="M">Male</option>
+									<option value="F">Female</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label>Grade</label>
+								<select name="grade" id="grade" class="form-control">
+									<option value="">Select Grade</option>
+									@foreach($grades as $grade)
+										<option value="{{$grade->id}}" @if(@$_GET['grade'] && $_GET['grade'] == $grade->id) selected @endif >{{$grade->name}}</option>
+									@endforeach
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row text-center">
+						<div class="col-md-12 btn_submit">
+							<button type="submit" class="btn" style="line-height: 35px;"> Submit <i class="fa fa-spinner fa-spin spinner_show hide" aria-hidden="true"></i></button>
+						</div>
+					</div>
+					</form>	
+				</div>
+			</div>
+		</div>
+	</div>
+	  
+	<form id="deleteStudentForm" action="{{route('deleteStudent')}}" method="post">
+		{{csrf_field()}}
+	<input type="hidden" value="" name="student_id" id="hiddenStudentId">
+	</form>
+
 </section>
 @php
 $selfAwareness = 0; $selfManagement =0; $decisioMaking =0;$relationshipSkills=0;$socialAwareness=0;
@@ -327,6 +411,7 @@ if(isset($RestorativePractice['social_awareness'])){
 	$socialAwareness = $RestorativePractice['social_awareness'];
 }
 @endphp
+<script src="{{url('/public/js/jquery.validate.min.js')}}"></script>
 <script>
 var chart = Highcharts.chart('container', {
 
@@ -471,7 +556,77 @@ var chart = Highcharts.chart('container1', {
 
 });
 </script>
- 
+<script type="text/javascript">
+  $("#addStudentForm").validate({
+        rules: {
+            first_name:{ 
+              required: true
+            },
+			last_name:{ 
+              required: true
+            },
+			roll_number:{ 
+              required: true
+            },
+			gender:{ 
+              required: true
+            },
+			grade:{ 
+              required: true
+            }
+        },
+        messages:{
+            first_name:{ 
+              required: "Please enter first name."
+            },
+			last_name:{ 
+              required: "Please enter last name."
+            },
+			roll_number:{ 
+              required: "Please enter roll number."
+            },
+			gender:{ 
+              required: "Please select gender."
+            },
+			grade:{ 
+              required: "Please select grade."
+            }
+        }
+    });
+
+	$('#addstudent').click(function() {
+		$('#addStudentForm').trigger("reset");
+		$('label.error').hide();
+		$('input.error').removeClass('error');
+		$('select.error').removeClass('error');
+	});
+
+	$('.student_edit').click(function(event) {
+		event.preventDefault();
+		$('label.error').hide();
+		$('input.error').removeClass('error');
+		$('select.error').removeClass('error');
+		var student = $(this).data('detail');
+		if(student) {
+			$('#first_name').val(student.name);
+			$('#last_name').val(student.last_name);
+			$('#roll_number').val(student.roll_number);
+			$('#gender').val(student.gender);
+			$('#grade').val(student.grade_id);
+			$('#student_id').val(student.id);
+		}
+		$('#add_student').modal('show');
+	});
+
+	$('.student_delete').click(function(event) {
+		event.preventDefault();
+		if(confirm("Are you sure you want to delete this?")) {
+			var student_id = $(this).data("id");
+			$('#hiddenStudentId').val(student_id);
+			$('#deleteStudentForm').submit();
+		}
+	});
+</script>
 </body>
 </html>
 

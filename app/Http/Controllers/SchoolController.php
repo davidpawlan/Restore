@@ -14,6 +14,8 @@ use App\Intervention;
 use App\Report;
 use Redirect;
 use Auth;
+use Illuminate\Support\Facades\Validator;
+
 class SchoolController extends Controller
 {
     private $School;private $Report;
@@ -129,8 +131,8 @@ class SchoolController extends Controller
      $time = strtoupper($request['time']);
      $reportTime =  date("H:i",strtotime($time));
 
-     $studenNameDetails = Student::where("id",$request['student_id'])->select("name")->first();
-     $studentName = $studenNameDetails->name;
+     $studenNameDetails = Student::where("id",$request['student_id'])->select("name","last_name")->first();
+     $studentName = trim($studenNameDetails->name . " " . $studenNameDetails->last_name);
 
      $report = new Report();
      $report->grade_id    = $request['grade_id'];
@@ -411,8 +413,8 @@ class SchoolController extends Controller
             }
 
             if(isset($_GET['student']) && !empty(trim($_GET['student']))){
-                $studentGet = Student::where("id",$_GET['student'])->select("name","roll_number")->first();
-                $studentName = $studentGet['name'];
+                $studentGet = Student::where("id",$_GET['student'])->select("name", "last_name", "roll_number")->first();
+                $studentName = trim($studentGet['name'] . " " . $studentGet['last_name']);
                 if(!empty($studentGet['roll_number'])){
                   $studentName .= "(#".$studentGet['roll_number'].")";
                 }
@@ -463,6 +465,78 @@ class SchoolController extends Controller
        return view("School.settings",['details' => $getDetails,'grades' => $getAllGrades,'grade_rosters' => $getMyGradeRosters]);
    }
 
+  public function deleteStudent(Request $request) {
+    $userId = Auth::id();
+    $res = Student::where(['id'=>$request->student_id, 'user_id'=>$userId])->update(['status'=>'0']);
+    if($res) {
+      $response['message'] = "Student has been deleted successfully.";
+      $response['error'] = false;
+    } else {
+      $response['message'] = "Failed to delete student.";
+      $response['error'] = true;
+    }
+    return Redirect::back()->with($response);
+  }
+
+  public function updateStudent(Request $request) {
+    $userId = Auth::id();
+    $validator = Validator::make($request->all(),[
+      'first_name'     =>  'required',
+      'last_name'      =>  'required',
+      'roll_number'    =>  'required',
+      'gender'         =>  'required',
+      'grade'          =>  'required'
+    ]);  
+
+    if($validator->fails()){ 
+      $messages = $validator->messages()->first();
+      $response['message'] = $messages;
+      $response['error'] = true;
+      return Redirect::back()->with($response);
+    }
+
+    $checkGrade = GradeRoster::where(['user_id' => $userId, 'grade_id' => $request->grade])->first();
+    if($checkGrade) {
+      \DB::table("grade_rosters")->where("id",$checkGrade->id)->update(['status' => '1']);
+      $gradeRosterId = $checkGrade->id;
+    } else {
+      $fileName = date("Y_m_d H_i_s").rand(0,9).".csv";
+      $gradeRosterId = GradeRoster::insertGetId(['user_id' => $userId, 'grade_id' => $request->grade, 'file_name' => $fileName, 'status' => '1', 'created_at' => date("Y-m-d H:i:s")]);
+    }
+
+    $student = new Student();
+    if(@$request->student_id && !empty($request->student_id)) {
+      $checkStudent = Student::where(['id'=>$request->student_id, 'user_id'=>$userId])->first();
+      if($checkStudent) {
+        $student = Student::find($request->student_id);
+      } else {
+        $student->created_at = date("Y-m-d H:i:s");
+      }
+    } else {
+      $student->created_at = date("Y-m-d H:i:s");
+    }
+    $student->user_id = $userId;
+    $student->name = $request->first_name;
+    $student->last_name = $request->last_name;
+    $student->roll_number = $request->roll_number;
+    $student->gender = $request->gender;
+    $student->grade_id = $request->grade;
+    $student->name = $request->first_name;
+    $student->grade_roster_id = $gradeRosterId;
+    $student->status = '1';
+
+    if($student->save()) {
+      $response['message'] = "Student details has been updated successfully.";
+      $response['error'] = false;
+
+    } else {
+      $response['message'] = "Failed to update student details.";
+      $response['error'] = true;
+    }
+
+    return Redirect::back()->with($response);
+  }
+
   /*****Upload Grade Roaster(CSV file)*****/
    public function uploadGradeRoaster(Request $request){
       $userId = Auth::id();
@@ -477,7 +551,7 @@ class SchoolController extends Controller
          foreach($files as $file){
           /*Get CSV data*/
            $data = array_map('str_getcsv', file($file));
-           if(isset($data[0]) && isset($data[0][1]) && $data[0][1] == "Name"){
+           if(isset($data[0]) && isset($data[0][1]) && trim($data[0][1]) == "First Name" && trim($data[0][2]) == "Last Name"){
              /*Data procced to insert*/
            }else{
              /*Invalid CSV Uploaded*/
@@ -487,7 +561,7 @@ class SchoolController extends Controller
            }
 
           \DB::table("grade_rosters")->where("id",$gradeRosterId)->update(['status' => '1', "created_at" => date('Y-m-d')]);
-          $getGradeRosterStudents = Student::where(["grade_roster_id" => $gradeRosterId])->count();
+          $getGradeRosterStudents = Student::where(["grade_roster_id" => $gradeRosterId,'status'=>'1'])->count();
           $studentsTOSkip = $getGradeRosterStudents+1;
            /*Insert CSV Data To DB*/
            $students = array_slice($data, $studentsTOSkip);
@@ -495,7 +569,8 @@ class SchoolController extends Controller
            foreach($students as $student){
               $studentRollNo = $student[0];
               $studentName   = $student[1];
-              $studentGender = $student[2];
+              $studentLastName   = $student[2];
+              $studentGender = $student[3];
               if($studentGender == "M"){
                 $gender = "M";
               }elseif($studentGender == "F"){
@@ -505,7 +580,7 @@ class SchoolController extends Controller
               }
               /*$checkAlready  = Student::where("roll_number",$studentRollNo)->where("user_id",$userId)->where('grade_id',$grade)->where("status","1")->first();
               if(empty($checkAlready)){*/
-                  Student::insert(['user_id' => $userId, 'grade_id' => $grade,'grade_roster_id' => $gradeRosterId, 'name' =>  $studentName, 'roll_number'=> $studentRollNo, 'gender' => $gender, 'status' => '1', 'created_at' => date("Y-m-d H:i:s")]);         
+                  Student::insert(['user_id' => $userId, 'grade_id' => $grade,'grade_roster_id' => $gradeRosterId, 'name' =>  $studentName, 'last_name'=> $studentLastName, 'roll_number'=> $studentRollNo, 'gender' => $gender, 'status' => '1', 'created_at' => date("Y-m-d H:i:s")]);
               /*}else{
                   Student::where("roll_number",$studentRollNo)->update(['user_id' => $userId, 'grade_id' => $grade,'grade_roster_id' => $insertGrade, 'name' =>  $studentName, 'gender' => $gender, 'status' => '1', 'created_at' => date("Y-m-d H:i:s")]);         
               }*/
@@ -521,7 +596,7 @@ class SchoolController extends Controller
         foreach($files as $file){
           /*Get CSV data*/
            $data = array_map('str_getcsv', file($file));
-           if(isset($data[0]) && isset($data[0][1]) && $data[0][1] == "Name"){
+           if(isset($data[0]) && isset($data[0][1]) && trim($data[0][1]) == "First Name" && trim($data[0][2]) == "Last Name"){
              /*Data procced to insert*/
            }else{
              /*Invalid CSV Uploaded*/
@@ -534,7 +609,8 @@ class SchoolController extends Controller
            foreach($students as $student){
               $studentRollNo = $student[0];
               $studentName   = $student[1];
-              $studentGender = $student[2];
+              $studentLastName   = $student[2];
+              $studentGender = $student[3];
               if($studentGender == "M"){
                 $gender = "M";
               }elseif($studentGender == "F"){
@@ -544,7 +620,7 @@ class SchoolController extends Controller
               }
               /*$checkAlready  = Student::where("roll_number",$studentRollNo)->where("user_id",$userId)->where('grade_id',$grade)->where("status","1")->first();
               if(empty($checkAlready)){*/
-                  Student::insert(['user_id' => $userId, 'grade_id' => $grade,'grade_roster_id' => $insertGrade, 'name' =>  $studentName, 'roll_number'=> $studentRollNo, 'gender' => $gender, 'status' => '1', 'created_at' => date("Y-m-d H:i:s")]);         
+                  Student::insert(['user_id' => $userId, 'grade_id' => $grade,'grade_roster_id' => $insertGrade, 'name' =>  $studentName, 'last_name'=> $studentLastName, 'roll_number'=> $studentRollNo, 'gender' => $gender, 'status' => '1', 'created_at' => date("Y-m-d H:i:s")]);
              /* }else{
                   Student::where("roll_number",$studentRollNo)->update(['user_id' => $userId, 'grade_id' => $grade,'grade_roster_id' => $insertGrade, 'name' =>  $studentName, 'gender' => $gender, 'status' => '1', 'created_at' => date("Y-m-d H:i:s")]);         
               }*/
@@ -569,7 +645,7 @@ class SchoolController extends Controller
      $HTML = "";
      if(isset($getStudents) && !empty($getStudents)){
         foreach($getStudents as $student){
-          $HTML .= "<option value='".$student->id."'>".$student->name."</option>";
+          $HTML .= "<option value='".$student->id."'>".$student->name." ".$student->last_name."</option>";
         }
      }
      echo $HTML;

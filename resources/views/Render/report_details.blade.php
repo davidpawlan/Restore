@@ -52,7 +52,7 @@
       </div>
       <div class="row">
                <div class="col-sm-7">
-                    <h4>Behavior:</h4>
+                    <h4>Referred Need:</h4>
                </div>
                <div class="col-sm-5">
                    <p>{{$report['behaviour']['name']}}</p>
@@ -60,7 +60,7 @@
       </div>
       <div class="row">
                <div class="col-sm-7">
-                    <h4>Location:</h4>
+                    <h4>Service:</h4>
                </div>
                <div class="col-sm-5">
                    <p>{{$report['location']['name']}}</p>
@@ -68,7 +68,7 @@
       </div>
       <div class="row">
                <div class="col-sm-7">
-                    <h4>Intervention:</h4>
+                    <h4>Demographics:</h4>
                </div>
                <div class="col-sm-5">
                    <p>{{$report['intervention']['name']}}</p>

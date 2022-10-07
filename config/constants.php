@@ -2,33 +2,34 @@
 return[
 	'TABLE_LIMIT' => 10,
 
-	'IN' => "Insubordination",
-	'IL' => 'Inappropriate Language',
-	'IC' => 'Inappropriate Contact',
-	'FI' => 'Fighting',
-	'CD' => 'Classroom Disruption',
-	'PI' => 'Property Infraction',
-	'BU' => 'Bullying',
-	'IA' => 'Inappropriate Attitude',
-	'TT' => 'Tardy/Truant',
+	'CO' => 'Coping',
+	'GR' => 'Grief',
+	'PS' => 'Problem Solving',
+	'SC' => 'Social Communication',
+	'PT' => 'Perspective Taking',
+	'FI' => 'Family Issues',
+	'PI' => 'Peer Issues',
+	'EF' => 'Executive Functioning',
+	'SR' => 'Self-Regulation',
 	'OT' => 'Other',
 
-	/*Location*/
-	'CL' => 'Classroom',
-	'PL' => 'Playground',
-	'CA' => 'Cafeteria',
-	'GY' => 'Gym',
-	'HA' => 'Hallway',
-	'COA' => 'Common Area',
-	'BA' => 'Bathroom',
-	'LI' => 'Library',
-	'BU' => 'Bus',
-	/*Intervention*/
-	'RPO' => 'Restorative Practice Only',
-	'LD'  => 'Lunch Detention',
-	'ASD' => 'After School Detention',
-	'IS'  => 'Internal Suspension',
-	'ES'  => 'External Suspension',
-	
-	
+	/*Servives*/
+	'IN' => 'Individual',
+	'SG' => 'Small Group',
+	'PC' => 'Principal Consultation',
+	'SC' => 'Staff Consultation',
+	'OB' => 'Observation',
+	'CRB' => 'Class-Room Based',
+	'AS' => 'Assessment',
+	'CM' => 'Crisis Management',
+	'PC' => 'Parent Communication',
+	'OT' => 'Other',
+
+	/*Demographics*/
+	'HF' => 'Hispanic Female',
+	'HM'  => 'Hispanic Male',
+	'AAF' => 'AA Female',
+	'AAM'  => 'AA Male',
+	'OF'  => 'Other Female',
+	'OM' => 'Other Male'
 ];

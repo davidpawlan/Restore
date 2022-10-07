@@ -72,9 +72,9 @@
 				</div>
 				<div class="row form-group">
 					<div class="col-md-12">
-						<label>Behavior</label>
+						<label>Referred Need</label>
 							<select class="form-control" name="behaviour_id" required>
-								<option value="">Select Behavior</option>
+								<option value="">Select Referred Need</option>
 								@forelse($behaviours as $behaviour)
 								<option value="{{$behaviour->id}}">{{$behaviour->name}}</option>
 								@empty
@@ -84,9 +84,9 @@
 				</div>
 				<div class="row form-group">
 					<div class="col-md-12">
-						<label for="pwd">Location</label>
+						<label for="pwd">Service</label>
 							<select class="form-control" name="location_id" required>
-								<option value="">Select Location</option>
+								<option value="">Select Service</option>
 								@forelse($locations as $location)
 								  <option value="{{$location->id}}">{{$location->name}}</option>
 								@empty
@@ -113,9 +113,9 @@
 				</div>
 				<div class="row form-group">
 					<div class="col-md-12">
-						<label>Intervention</label>
+						<label>Demographics</label>
 							<select class="form-control" name="intervention_id" required>
-								<option value="">Select Intervention</option>
+								<option value="">Select Demographics</option>
 								@forelse($interventions as $intervention)
 								    <option value="{{$intervention->id}}">{{$intervention->name}}</option>
 								@empty

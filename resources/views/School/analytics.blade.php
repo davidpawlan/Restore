@@ -237,9 +237,9 @@ $socialAwarenessFemale = round($gender['social_awareness']['Female'],2);
 
 <!--Behavior Data for PDF starts-->
 <div class="behavioursReportsDiv hide">
-	<div class="reportHeader3">Behavior</div>
+	<div class="reportHeader3">Referred Need</div>
 @php
-	$BehaviorShow = array('IN' => 0,'IL' => 0,'IC' => 0,'FI' => 0,'CD' => 0,'PI' =>0,'BU' =>0,'IA' =>0,'TT' =>0,'OT' =>0); 
+	$BehaviorShow = array('CO' => 0,'GR' => 0,'PS' => 0,'SC' => 0,'PT' => 0,'FI' =>0,'PI' =>0,'EF' =>0,'SR' =>0,'OT' =>0);
 	foreach($BehaviorShow as $key=>$value){
 	 	if(array_search($key, array_column($Behavior, 'short_name')) !== false) {
 	       $keyFind = array_search($key, array_column($Behavior, 'short_name'));
@@ -260,9 +260,9 @@ $socialAwarenessFemale = round($gender['social_awareness']['Female'],2);
 
 <!--Behavior Data for PDF starts-->
 <div class="locationReportsDiv hide">
-	<div class="reportHeader4">Location</div>
+	<div class="reportHeader4">Service</div>
 	@php
-		$LocationsShow = array('CL' => 0,'PL' => 0,'CA' => 0,'GY' => 0,'HA' => 0,'COA' =>0,'BA' =>0,'LI' =>0,'BU' =>0,'OT' =>0); 
+		$LocationsShow = array('IN' => 0,'SG' => 0,'PC' => 0,'SC' => 0,'OB' => 0,'CRB' =>0,'AS' =>0,'CM' =>0,'PC' =>0,'OT' =>0);
 		if(!empty($LocationsShow)){
 			foreach($LocationsShow as $key=>$value){
 			 	if(array_search($key, array_column($locations, 'short_name')) !== false) {
@@ -285,9 +285,9 @@ $socialAwarenessFemale = round($gender['social_awareness']['Female'],2);
 
 <!--Intervention Pdf Data starts-->
 <div class="interventionReportsDiv hide">
-	<div class="reportHeader5">Intervention</div>
+	<div class="reportHeader5">Demographics</div>
 @php
-	$InterventionssShow = array('RPO' => 0,'LD' => 0,'ASD' => 0,'IS' => 0,'ES' => 0,'OT' =>0); 
+	$InterventionssShow = array('HF' => 0,'HM' => 0,'AAF' => 0,'AAM' => 0,'OF' => 0,'OM' =>0);
 	if(!empty($InterventionssShow)){
 		foreach($InterventionssShow as $key=>$value){
 		 	if(array_search($key, array_column($Interventions, 'short_name')) !== false) {
@@ -438,19 +438,19 @@ $socialAwarenessFemale = round($gender['social_awareness']['Female'],2);
 				</li>
 			<li>
 	 <div class="grade_listng bottm_grph othr_beh_loc">
-	  <h4>Behavior</h4>
+	  <h4>Referred Need</h4>
 				  
  <div id="container3" style="height: 350px"></div>
  	<ul class="grph_bar_line">
-				<li><span>&nbsp;</span>IN- Insubordination</li>
-				<li><span>&nbsp;</span>IL- Inappropriate Language</li>
-				<li><span>&nbsp;</span>IC- Inappropriate Contact</li>
-				<li><span>&nbsp;</span>FI- Fighting</li>
-				<li><span>&nbsp;</span>CD- Classroom Disruption</li>
-				<li><span>&nbsp;</span>PI- Property Infraction</li>
-				<li><span>&nbsp;</span>BU- Bullying</li>
-				<li><span>&nbsp;</span>IA- Inappropriate Attitude</li>
-				<li><span>&nbsp;</span>TT- Tardy/Truant</li>
+				<li><span>&nbsp;</span>CO- Coping</li>
+				<li><span>&nbsp;</span>GR- Grief</li>
+				<li><span>&nbsp;</span>PS- Problem Solving</li>
+				<li><span>&nbsp;</span>SC- Social Communication</li>
+				<li><span>&nbsp;</span>PT- Perspective Taking</li>
+				<li><span>&nbsp;</span>FI- Family Issues</li>
+				<li><span>&nbsp;</span>PI- Peer Issues</li>
+				<li><span>&nbsp;</span>EF- Executive Functioning</li>
+				<li><span>&nbsp;</span>SR- Self-Regulation</li>
 				<li><span>&nbsp;</span>OT- Other</li>
 				</ul>
 				
@@ -458,33 +458,33 @@ $socialAwarenessFemale = round($gender['social_awareness']['Female'],2);
 				</li>
 				<li>
 					<div class="grade_listng bottm_grph othr_beh_loc">
-			  		<h4>Location</h4>
+					<h4>Service</h4>
 					<div id="container4" style="height: 350px"></div>
 		 				<ul class="grph_bar_line">
-							<li><span>&nbsp;</span>CL- Classroom</li>
-							<li><span>&nbsp;</span>PL- Playground</li>
-							<li><span>&nbsp;</span>CA- Cafeteria</li>
-							<li><span>&nbsp;</span>GY- Gym</li>
-							<li><span>&nbsp;</span>HA- Hallway</li>
-							<li><span>&nbsp;</span>COA- Common Area</li>
-							<li><span>&nbsp;</span>BA- Bathroom</li>
-							<li><span>&nbsp;</span>LI- Library</li>
-							<li><span>&nbsp;</span>BU- Bus</li>
+							<li><span>&nbsp;</span>IN- Individual</li>
+							<li><span>&nbsp;</span>SG- Small Group</li>
+							<li><span>&nbsp;</span>PC- Principal Consultation</li>
+							<li><span>&nbsp;</span>SC- Staff Consultation</li>
+							<li><span>&nbsp;</span>OB- Observation</li>
+							<li><span>&nbsp;</span>CRB- Class-Room Based</li>
+							<li><span>&nbsp;</span>AS- Assessment</li>
+							<li><span>&nbsp;</span>CM- Crisis Management</li>
+							<li><span>&nbsp;</span>PC- Parent Communication</li>
 							<li><span>&nbsp;</span>OT- Other</li>
 						</ul>
 					</div>
 				</li>
 			<li>
 				<div class="grade_listng bottm_grph othr_beh_loc">
-	  				<h4>Intervention</h4>
+	  				<h4>Demographics</h4>
 					<div id="container5" style="height: 350px"></div>
 						 <ul class="grph_bar_line">
-										<li><span>&nbsp;</span>RPO- Restorative Practice Only</li>
-										<li><span>&nbsp;</span>LD- Lunch Detention</li>
-										<li><span>&nbsp;</span>ASD- After School Detention</li>
-										<li><span>&nbsp;</span>IS- Internal Suspension</li>
-										<li><span>&nbsp;</span>ES- External Suspension</li>
-										<li><span style="background-color:#8f8c90">&nbsp;</span>OT- Other</li>
+										<li><span>&nbsp;</span>HF- Hispanic Female</li>
+										<li><span>&nbsp;</span>HM- Hispanic Male</li>
+										<li><span>&nbsp;</span>AAF- AA Female</li>
+										<li><span>&nbsp;</span>AAM- AA Male</li>
+										<li><span>&nbsp;</span>OF- Other Female</li>
+										<li><span style="background-color:#8f8c90">&nbsp;</span>OM- Other Male</li>
 										</ul>
 										
 										</div>
@@ -723,7 +723,7 @@ var chart = Highcharts.chart('container2', {
 
 </script>
 @php
-	$BehaviorShow = array('IN' => 0,'IL' => 0,'IC' => 0,'FI' => 0,'CD' => 0,'PI' =>0,'BU' =>0,'IA' =>0,'TT' =>0,'OT' =>0); 
+	$BehaviorShow = array('CO' => 0,'GR' => 0,'PS' => 0,'SC' => 0,'PT' => 0,'FI' =>0,'PI' =>0,'EF' =>0,'SR' =>0,'OT' =>0); 
 	foreach($BehaviorShow as $key=>$value){
 	 	if(array_search($key, array_column($Behavior, 'short_name')) !== false) {
 	       $keyFind = array_search($key, array_column($Behavior, 'short_name'));
@@ -744,7 +744,7 @@ var chart = Highcharts.chart('container3', {
   },
 
   xAxis: {
-    categories: ['IN', 'IL', 'IC', 'FI', 'CD', 'PI', 'BU', 'IA', 'TT', 'OT' ]
+    categories: ['CO', 'GR', 'PS', 'SC', 'PT', 'FI', 'PI', 'EF', 'SR', 'OT' ]
   },
   exporting: {
     enabled: false, // hide button
@@ -759,7 +759,7 @@ var chart = Highcharts.chart('container3', {
         }
     },
   series: [{
-  name: 'Behavior',
+  name: 'Referred Need',
     type: 'column',
     colorByPoint: true,
 	colors: "#9c00d9 #308482 #f9963c #ff0000 #1a386e #805f85 #3c3c3c #ffde48 #b5507b #8f8c90".split(" "),
@@ -771,7 +771,7 @@ var chart = Highcharts.chart('container3', {
 
 </script>
 @php
-	$LocationsShow = array('CL' => 0,'PL' => 0,'CA' => 0,'GY' => 0,'HA' => 0,'COA' =>0,'BA' =>0,'LI' =>0,'BU' =>0,'OT' =>0); 
+	$LocationsShow = array('IN' => 0,'SG' => 0,'PC' => 0,'SC' => 0,'OB' => 0,'CRB' =>0,'AS' =>0,'CM' =>0,'PC' =>0,'OT' =>0); 
 	if(!empty($LocationsShow)){
 		foreach($LocationsShow as $key=>$value){
 		 	if(array_search($key, array_column($locations, 'short_name')) !== false) {
@@ -796,7 +796,7 @@ var chart = Highcharts.chart('container4', {
   },
 
   xAxis: {
-    categories: ['CL', 'PL', 'CA', 'GY', 'HA', 'COA', 'BA', 'LI', 'BU', 'OT' ]
+    categories: ['IN', 'SG', 'PC', 'SC', 'OB', 'CRB', 'AS', 'CM', 'PC', 'OT' ]
   },
   plotOptions: {
         column: {
@@ -808,7 +808,7 @@ var chart = Highcharts.chart('container4', {
         }
     },
   series: [{
-   name: 'Location',
+   name: 'Service',
     type: 'column',
     colorByPoint: true,
 	colors: "#9c00d9 #308482 #f9963c #ff0000 #1a386e #805f85 #3c3c3c #ffde48 #b5507b #8f8c90".split(" "),
@@ -819,7 +819,7 @@ var chart = Highcharts.chart('container4', {
 });
 </script>
 @php
-	$InterventionssShow = array('RPO' => 0,'LD' => 0,'ASD' => 0,'IS' => 0,'ES' => 0,'OT' =>0); 
+	$InterventionssShow = array('HF' => 0,'HM' => 0,'AAF' => 0,'AAM' => 0,'OF' => 0,'OM' =>0); 
 	if(!empty($InterventionssShow)){
 		foreach($InterventionssShow as $key=>$value){
 		 	if(array_search($key, array_column($Interventions, 'short_name')) !== false) {
@@ -844,7 +844,7 @@ var chart = Highcharts.chart('container5', {
   },
 
   xAxis: {
-    categories: ['RPO', 'LD', 'ASD', 'IS', 'ES', 'OT' ]
+    categories: ['HF', 'HM', 'AAF', 'AAM', 'OF', 'OM' ]
   },
   plotOptions: {
         column: {
@@ -856,7 +856,7 @@ var chart = Highcharts.chart('container5', {
         }
     },
   series: [{
-    name: 'Intervention',
+    name: 'Demographics',
     type: 'column',
     colorByPoint: true,
 	colors: "#9c00d9 #308482 #f9963c #ff0000 #1a386e #8f8c90".split(" "),
